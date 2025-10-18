@@ -1,0 +1,44 @@
+customer-analytics-platform/
+│
+├── infra/                  # Cloud + Terraform
+│   ├── main.tf
+│   ├── variables.tf
+│   └── README.md
+│
+├── data_pipeline/          # Airflow DAGs + Spark jobs
+│   ├── dags/
+│   │   └── etl_pipeline.py
+│   ├── spark_jobs/
+│   │   └── transform_events.py
+│   └── README.md
+│
+├── dbt_models/             # DBT transformations
+│   ├── models/
+│   │   ├── staging/
+│   │   └── marts/
+│   └── README.md
+│
+├── warehouse/              # SQL & Stored Procedures
+│   ├── schemas.sql
+│   ├── procedures.sql
+│   └── README.md
+│
+├── ml_model/               # DS & ML
+│   ├── notebooks/
+│   │   └── churn_model.ipynb
+│   ├── deploy/
+│   │   ├── lambda_function.py
+│   │   └── requirements.txt
+│   └── README.md
+│
+├── api/                    # Exposed endpoints
+│   ├── app.py
+│   ├── requirements.txt
+│   └── README.md
+│
+├── docs/                   # End-user & support docs
+│   ├── api_usage.md
+│   ├── troubleshooting.md
+│   └── architecture.png
+│
+└── README.md               # Main repo intro

@@ -1,0 +1,13 @@
+#Ignore all source tables
+Databackup/
+local_airflow_with_astro/
+tables/
+data_pipeline/cleaned_data/
+
+#Ignore venvs and keys
+venv/
+*.csv
+data_pipeline/venv/
+.env
+.venv/
+.DS_Store
