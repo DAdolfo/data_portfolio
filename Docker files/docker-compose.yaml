@@ -78,6 +78,8 @@ x-airflow-common:
     - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
     - /Users/jaguilar/Desktop/Portfolio/test_folder/dropoff_folder:/dropoff_folder
+    - /Users/jaguilar/Desktop/Portfolio/test_folder/scripts:/scripts
+    - /Users/jaguilar/Desktop/Portfolio/test_folder/cleaned_data:/cleaned_data
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
