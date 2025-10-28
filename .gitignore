@@ -12,3 +12,4 @@ data_pipeline/venv/
 .venv/
 .DS_Store
 test_folder/
+Docker files/logs/
