@@ -13,5 +13,7 @@ data_pipeline/venv/
 .DS_Store
 
 #Ignore folders
-test_folder
+test_folder/cleaned_data/
+test_folder/dropoff_folder/
+test_folder/venv/
 Docker files/logs/
