@@ -36,7 +36,7 @@ events_schema = StructType([
     StructField("event_type", StringType(), True)
 ])
 
-events = spark.read.csv("../tables/events_table.csv", header=True, schema=events_schema).persist()
+events = spark.read.csv("../test_folder/dropoff_folder/*.csv", header=True, schema=events_schema).persist()
 events_size = events.count()
 logger.info(f"Events data loaded, there are {events_size} records on it.")
 
