@@ -11,3 +11,4 @@ data_pipeline/venv/
 .env
 .venv/
 .DS_Store
+test_folder/
