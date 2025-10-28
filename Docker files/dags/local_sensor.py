@@ -1,6 +1,7 @@
 from airflow.sdk import dag, task
 from airflow.providers.standard.sensors.filesystem import FileSensor
-from airflow.operators.bash import BashOperator
+from airflow.providers.docker.operators.docker import DockerOperator
+from docker.types import Mount
 from pendulum import datetime
 
 @dag(
@@ -20,9 +21,17 @@ def local_sensor():
         timeout = 60*15
     )
 
-    file_ingestion = BashOperator(
-        task_id="processing_file",
-        bash_command="python3 scripts/ingestion_pipeline.py"
+    file_ingestion = DockerOperator(
+        task_id="container_to_process_file",
+        image="events_ingestion_image",
+        hostname="events_ingest_container",
+        auto_remove="success",
+        command="python3 /scripts/ingestion_pipeline.py",
+        network_mode="bridge",
+        mounts=[Mount(source="/Users/jaguilar/Desktop/Portfolio/test_folder/scripts", target="/usr/src/app/scripts", type="bind"),
+                Mount(source="/Users/jaguilar/Desktop/Portfolio/test_folder/cleaned_data", target="/usr/src/app/cleaned_data", type="bind"),
+                Mount(source="/Users/jaguilar/Desktop/Portfolio/test_folder/containers_requeriments", target="/usr/src/app/containers_requirements", type="bind")
+                ]
     )
 
     file_sensor >> file_ingestion

@@ -80,6 +80,7 @@ x-airflow-common:
     - /Users/jaguilar/Desktop/Portfolio/test_folder/dropoff_folder:/dropoff_folder
     - /Users/jaguilar/Desktop/Portfolio/test_folder/scripts:/scripts
     - /Users/jaguilar/Desktop/Portfolio/test_folder/cleaned_data:/cleaned_data
+    - /var/run/docker.sock:/var/run/docker.sock
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
