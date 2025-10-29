@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
 # Variables de entorno
 ENV JAVA_HOME="/usr/lib/jvm/java-17-openjdk-arm64"
 ENV SPARK_HOME="/opt/spark"
+ENV SPARK_LOCAL_HOSTNAME="localhost"
 ENV PATH="${JAVA_HOME}/bin:${SPARK_HOME}/bin:${SPARK_HOME}/sbin:${PATH}"
 
 # Instalar Spark
@@ -22,8 +23,10 @@ RUN mkdir -p ${SPARK_HOME} \
 # Copiar código
 WORKDIR /app
 COPY . .
+RUN mkdir -p /app/dropoff_folder
+RUN mkdir -p /app/cleaned_data
 
 # Instalar dependencias Python
 RUN pip install --no-cache-dir -r pipeline_requirements.txt
 
-#CMD ["echo", "hello world"]
+CMD ["python3", "ingestion_pipeline.py"]

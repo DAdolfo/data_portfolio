@@ -23,12 +23,16 @@ def local_sensor():
 
     file_ingestion = DockerOperator(
         task_id="container_to_process_file",
-        image="apache/spark-py:latest",
+        image="events_ingestion_image_3",
         hostname="events_ingest_container",
         auto_remove="success",
         command="python3 ingestion_pipeline.py",
         network_mode="bridge",
-        mounts=[Mount(source="/Users/jaguilar/Desktop/Portfolio/test_folder/cleaned_data", target="/usr/src/app/cleaned_data", type="bind")]
+        mem_limit="6g",
+        mounts=[Mount(source="/Users/jaguilar/Desktop/Portfolio/test_folder/cleaned_data", 
+                      target="/app/cleaned_data", type="bind"),
+                Mount(source="/Users/jaguilar/Desktop/Portfolio/test_folder/dropoff_folder", 
+                      target="/app/dropoff_folder", type="bind")]
     )
 
     file_sensor >> file_ingestion

@@ -33,7 +33,7 @@ events_schema = StructType([
     StructField("event_type", StringType(), True)
 ])
 
-events = spark.read.csv("../dropoff_folder/*.csv", header=True, schema=events_schema).persist()
+events = spark.read.csv("/app/dropoff_folder/events_table.csv", header=True, schema=events_schema).persist()
 events_size = events.count()
 logger.info(f"Events data loaded, there are {events_size} records on it.")
 
@@ -43,25 +43,9 @@ logger.info(f"The events data has the following amount of null values: {Events_n
 
 #Generate fake ids for the events that don't have one, if any
 sessionids_with_null_userids = list(events.select("session_id").distinct().where(F.col("user_id").isNull()).toPandas()["session_id"])
-#Check if any user_id is null for a session that does have a user_id record in any row
-null_users_check_list = list(events.select("session_id")
-        .where(
-            (F.col("session_id").isin(sessionids_with_null_userids)) &
-            (F.col("user_id").isNotNull())
-        )
-    )
-
-#I considered filling nulls for "What if a session id has only half the user_id values attributed to that session as null?""
-#Due to the complexity of accomplishing this in Spark I think, as a Data Engineer, I'd suggest to fix the code 
-#that gives us the event before putting this load in our pipeline, that if the rate of events with that problem is significant
-
-if null_users_check_list:
-    events = (events
-        .filter(~(F.col("session_id").isin(null_users_check_list)))          
-    )
 
 #Only proceed if we have sessions without user_ids
-elif sessionids_with_null_userids:
+if sessionids_with_null_userids:
 
     events.createOrReplaceTempView("events_table")
     query = """
@@ -116,9 +100,9 @@ elif sessionids_with_null_userids:
     Events_null_dictionary = {col : events.filter(events[col].isNull()).count() for col in events.columns}
     logger.info(f"After cleanup, the events data has been written with the following amount of null values: {Events_null_dictionary}")
 
-elif ~sessionids_with_null_userids:
+if not sessionids_with_null_userids:
 
-    events.write.parquet(f'./cleaned_data/cleaned_events_batch_{datetime.now().strftime("%Y-%m-%d")}',
+    events.write.parquet(f'/app/cleaned_data/cleaned_events_batch_{datetime.now().strftime("%Y-%m-%d")}',
                 mode = "overwrite",
                 partitionBy="event_type" #To be defined once we know what to train the model with     
                 )
