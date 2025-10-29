@@ -4,9 +4,6 @@ from itertools import chain
 from datetime import datetime
 import math
 
-os.environ["SPARK_HOME"] = "/Applications/Spark"
-os.environ["JAVA_HOME"] = "/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home"
-
 from pyspark.sql import SparkSession
 from pyspark.logger import PySparkLogger
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, TimestampType, FloatType

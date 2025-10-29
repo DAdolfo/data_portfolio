@@ -23,7 +23,7 @@ def local_sensor():
 
     file_ingestion = DockerOperator(
         task_id="container_to_process_file",
-        image="events_ingestion_image:latest",
+        image="apache/spark-py:latest",
         hostname="events_ingest_container",
         auto_remove="success",
         command="python3 ingestion_pipeline.py",
