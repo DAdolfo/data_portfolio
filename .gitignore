@@ -13,3 +13,8 @@ data_pipeline/venv/
 .DS_Store
 test_folder/
 Docker files/logs/
+infra/airflow-instance-key
+infra/.terraform/
+infra/terraform.*
+infra/airflow-*
+infra/terraform.tfvars
