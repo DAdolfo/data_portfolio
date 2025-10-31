@@ -29,5 +29,12 @@ resource "aws_instance" "airflow_instance" {
     instance_type = "m8g.large"
     key_name = aws_key_pair.airflow_instance_key.key_name
     vpc_security_group_ids = ["sg-033a2dfde67ca421b"]
-}
+    user_data = file("docker_airflow_install.sh")
 
+    root_block_device {
+        volume_size           = 20
+        volume_type           = "gp3"
+        delete_on_termination = true 
+
+  }
+}

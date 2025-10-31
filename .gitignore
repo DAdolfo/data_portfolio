@@ -23,3 +23,5 @@ infra/.terraform/
 infra/.terraform.*
 infra/terraform*
 test_folder/
+infra/terraform.tftstate*
+infra/.terraform.lock.*
