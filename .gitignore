@@ -20,5 +20,6 @@ infra/airflow-*
 infra/terraform.tfvars
 infra/airflow-*
 infra/.terraform/
-infra/.terraform/providers/
+infra/.terraform.*
+infra/terraform*
 test_folder/
