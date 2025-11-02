@@ -37,7 +37,7 @@ def s3_check_dag():
 
     file_ingestion = DockerOperator(
         task_id="container_processing_file",
-        image="jadolfo9/events_ingestion_image_3",
+        image="jadolfo9/events_ingestion_image_v2:latest",
         hostname="events_ingest_container",
         auto_remove="success",
         command="python3 ingestion_pipeline.py",

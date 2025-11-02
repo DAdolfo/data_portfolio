@@ -1,7 +1,7 @@
 import os
 import logging
 from itertools import chain
-from datetime import datetime
+from datetime import datetime, timedelta
 import math
 
 from pyspark.sql import SparkSession
@@ -10,7 +10,13 @@ from pyspark.sql.types import StructType, StructField, StringType, IntegerType, 
 from pyspark.sql import functions as F
 from pyspark.sql.window import Window
 
-spark = SparkSession.builder.getOrCreate()
+spark = SparkSession.builder \
+    .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem") \
+    .config("spark.hadoop.fs.s3a.aws.credentials.provider", "com.amazonaws.auth.InstanceProfileCredentialsProvider") \
+    .config("spark.hadoop.fs.s3a.path.style.access", "true") \
+    .config("spark.sql.adaptive.enabled", "true") \
+    .config("spark.sql.adaptive.coalescePartitions.enabled", "true") \
+    .getOrCreate()
 
 logger = PySparkLogger.getLogger("spark_logger")
 handler = logging.FileHandler("cleanup.log")
@@ -33,8 +39,12 @@ events_schema = StructType([
     StructField("event_type", StringType(), True)
 ])
 
-events = spark.read.csv(f"s3://data-bucket-jaguilar-9/events_input/{(datetime.now() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")}/events_*.csv", 
+try:
+    events = spark.read.csv(f"s3://data-bucket-jaguilar-9/events_input/{(datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')}/events_*.csv", 
                         header=True, schema=events_schema).persist()
+except Exception as e:
+    print(f"Error processing events: {e}")
+    
 events_size = events.count()
 logger.info(f"Events data loaded, there are {events_size} records on it.")
 
