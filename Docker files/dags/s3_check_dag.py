@@ -1,19 +1,19 @@
 from airflow.sdk import dag
-from airflow.providers.amazon.aws.operators.s3 import S3KeySensor
+from airflow.providers.amazon.aws.sensors.s3 import S3KeySensor
 from airflow.providers.docker.operators.docker import DockerOperator
 from docker.types import Mount
-from pendulum import datetime, duration
+import pendulum
 
 default_args = {
 "retries" : 3,
-"retry_delay" : duration(minutes=30),
+"retry_delay" : pendulum.duration(minutes=30),
 "email":"ja09aguilar@gmail.com",
 "email_on_failure":True
 }
 
 @dag(
     schedule="10 0 * * *",
-    start_date=datetime(2025,11,1),
+    start_date=pendulum.datetime(2025,11,1),
     description="DAG to ingest events from the previous day",
     tags=["daily", "input_s3", "output_s3", "output_snowflake"],
     max_consecutive_failed_dag_runs=3,

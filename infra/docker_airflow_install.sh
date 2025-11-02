@@ -18,6 +18,29 @@ sudo chmod +x /usr/libexec/docker/cli-plugins/docker-compose
 
 #Install Airflow
 sudo curl -LfO 'https://airflow.apache.org/docs/apache-airflow/3.1.1/docker-compose.yaml'
+sudo pip install pyyaml
+sudo cat > modify_compose_file.py << 'EOF'
+import yaml
+
+class NoAliasDumper(yaml.SafeDumper):
+    def ignore_aliases(self, data):
+        return True
+
+with open("docker-compose.yaml", "r") as f:
+        compose = yaml.safe_load(f)
+
+        if 'volumes' in compose['x-airflow-common']:
+            compose['x-airflow-common']['volumes'].append('/var/run/docker.sock:/var/run/docker.sock')
+
+        if 'environment' in compose['x-airflow-common']:
+             compose['x-airflow-common']['environment']['AIRFLOW__CORE__LOAD_EXAMPLES'] = 'false'
+
+with open('docker-compose.yaml', 'w') as f:
+    yaml.dump(compose, f, Dumper=NoAliasDumper, sort_keys=False)
+EOF
+
+sudo python3 modify_compose_file.py
+
 sudo mkdir -p ./dags ./logs ./plugins ./config
 sudo echo -e "AIRFLOW_UID=$(id -u)" > .env
 sleep 15
