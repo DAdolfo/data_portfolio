@@ -107,3 +107,6 @@ if not sessionids_with_null_userids:
                 mode = "overwrite",
                 partitionBy="event_type" #To be defined once we know what to train the model with     
                 )
+
+
+print("Good bye...")

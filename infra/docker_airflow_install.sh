@@ -18,6 +18,7 @@ sudo chmod +x /usr/libexec/docker/cli-plugins/docker-compose
 
 #Install Airflow
 sudo curl -LfO 'https://airflow.apache.org/docs/apache-airflow/3.1.1/docker-compose.yaml'
+sudo yum -y install python-pip
 sudo pip install pyyaml
 sudo cat > modify_compose_file.py << 'EOF'
 import yaml
