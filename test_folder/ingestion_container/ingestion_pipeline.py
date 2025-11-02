@@ -33,7 +33,8 @@ events_schema = StructType([
     StructField("event_type", StringType(), True)
 ])
 
-events = spark.read.csv("/app/dropoff_folder/events_table.csv", header=True, schema=events_schema).persist()
+events = spark.read.csv(f"s3://data-bucket-jaguilar-9/events_input/{(datetime.now() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")}/events_*.csv", 
+                        header=True, schema=events_schema).persist()
 events_size = events.count()
 logger.info(f"Events data loaded, there are {events_size} records on it.")
 
@@ -91,7 +92,7 @@ if sessionids_with_null_userids:
     events = events.filter(F.col("traffic_source").isin(traffic_sources))
     events = events.filter(F.col("event_type").isin(event_types))
 
-    events.write.parquet(f'./cleaned_data/cleaned_events_batch_{datetime.now().strftime("%Y-%m-%d")}',
+    events.write.parquet(f's3://data-bucket-jaguilar-9/events_output/cleaned_events_batch_{(datetime.now() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")}',
                      mode = "overwrite",
                      partitionBy="event_type" #To be defined once we know what to train the model with
                      
@@ -102,7 +103,7 @@ if sessionids_with_null_userids:
 
 if not sessionids_with_null_userids:
 
-    events.write.parquet(f'/app/cleaned_data/cleaned_events_batch_{datetime.now().strftime("%Y-%m-%d")}',
+    events.write.parquet(f's3://data-bucket-jaguilar-9/events_output/cleaned_events_batch_{(datetime.now() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")}',
                 mode = "overwrite",
                 partitionBy="event_type" #To be defined once we know what to train the model with     
                 )
