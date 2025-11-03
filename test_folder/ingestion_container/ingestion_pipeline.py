@@ -5,20 +5,22 @@ from datetime import datetime, timedelta
 import math
 
 from pyspark.sql import SparkSession
-from pyspark.logger import PySparkLogger
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, TimestampType, FloatType
 from pyspark.sql import functions as F
 from pyspark.sql.window import Window
 
 spark = SparkSession.builder \
+    .appName("EventsIngestion") \
     .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem") \
     .config("spark.hadoop.fs.s3a.aws.credentials.provider", "com.amazonaws.auth.InstanceProfileCredentialsProvider") \
-    .config("spark.hadoop.fs.s3a.path.style.access", "true") \
-    .config("spark.sql.adaptive.enabled", "true") \
-    .config("spark.sql.adaptive.coalescePartitions.enabled", "true") \
+    .config("spark.hadoop.fs.s3a.path.style.access", "false") \
+    .config("spark.hadoop.fs.s3a.connection.ssl.enabled", "true") \
+    .config("spark.hadoop.fs.s3a.endpoint", "s3.amazonaws.com") \
+    .config("spark.hadoop.fs.s3a.multiobjectdelete.enable", "false") \
     .getOrCreate()
 
-logger = PySparkLogger.getLogger("spark_logger")
+
+logger = logging.getLogger("spark_logger")
 handler = logging.FileHandler("cleanup.log")
 logger.addHandler(handler)
 logger.setLevel(logging.INFO)
@@ -40,11 +42,14 @@ events_schema = StructType([
 ])
 
 try:
-    events = spark.read.csv(f"s3://data-bucket-jaguilar-9/events_input/{(datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')}/events_*.csv", 
+    events = spark.read.csv(f"s3a://data-bucket-jaguilar-9/events_input/{(datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')}/events_*.csv", 
                         header=True, schema=events_schema).persist()
 except Exception as e:
     print(f"Error processing events: {e}")
-    
+    import traceback
+    traceback.print_exc()
+    raise
+
 events_size = events.count()
 logger.info(f"Events data loaded, there are {events_size} records on it.")
 
@@ -102,7 +107,7 @@ if sessionids_with_null_userids:
     events = events.filter(F.col("traffic_source").isin(traffic_sources))
     events = events.filter(F.col("event_type").isin(event_types))
 
-    events.write.parquet(f's3://data-bucket-jaguilar-9/events_output/cleaned_events_batch_{(datetime.now() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")}',
+    events.write.parquet(f's3a://data-bucket-jaguilar-9/events_output/cleaned_events_batch_{(datetime.now() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")}',
                      mode = "overwrite",
                      partitionBy="event_type" #To be defined once we know what to train the model with
                      
@@ -113,7 +118,7 @@ if sessionids_with_null_userids:
 
 if not sessionids_with_null_userids:
 
-    events.write.parquet(f's3://data-bucket-jaguilar-9/events_output/cleaned_events_batch_{(datetime.now() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")}',
+    events.write.parquet(f's3a://data-bucket-jaguilar-9/events_output/cleaned_events_batch_{(datetime.now() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")}',
                 mode = "overwrite",
                 partitionBy="event_type" #To be defined once we know what to train the model with     
                 )

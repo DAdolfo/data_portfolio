@@ -2,8 +2,8 @@ chain==1.0
 DateTime==5.5
 numpy==2.3.4
 pandas==2.3.3
-py4j==0.10.9.9
-pyspark==4.0.1
+py4j==0.10.9.7
+pyspark==3.5.0
 python-dateutil==2.9.0.post0
 pytz==2025.2
 six==1.17.0
