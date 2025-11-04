@@ -42,7 +42,8 @@ events_schema = StructType([
 ])
 
 try:
-    events = spark.read.csv(f"s3a://data-bucket-jaguilar-9/events_input/{(datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')}/events_*.csv", 
+    yesterday = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+    events = spark.read.csv(f"s3a://data-bucket-jaguilar-9/events_input/{yesterday}/events_*.csv", 
                         header=True, schema=events_schema).persist()
 except Exception as e:
     print(f"Error processing events: {e}")
