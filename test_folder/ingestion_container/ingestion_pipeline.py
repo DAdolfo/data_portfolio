@@ -108,7 +108,7 @@ if sessionids_with_null_userids:
     events = events.filter(F.col("traffic_source").isin(traffic_sources))
     events = events.filter(F.col("event_type").isin(event_types))
 
-    events.write.parquet(f's3a://data-bucket-jaguilar-9/events_output/cleaned_events_batch_{(datetime.now() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")}',
+    events.write.parquet(f's3a://data-bucket-jaguilar-9/events_output/cleaned_events_batch_{yesterday}',
                      mode = "overwrite",
                      partitionBy="event_type" #To be defined once we know what to train the model with
                      
@@ -119,7 +119,7 @@ if sessionids_with_null_userids:
 
 if not sessionids_with_null_userids:
 
-    events.write.parquet(f's3a://data-bucket-jaguilar-9/events_output/cleaned_events_batch_{(datetime.now() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")}',
+    events.write.parquet(f's3a://data-bucket-jaguilar-9/events_output/cleaned_events_batch_{yesterday}',
                 mode = "overwrite",
                 partitionBy="event_type" #To be defined once we know what to train the model with     
                 )
