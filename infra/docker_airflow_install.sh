@@ -7,7 +7,7 @@ set -e
 
 #Update the machine and install Docker
 sudo yum update -y
-sudo yum install -y docker
+sudo yum install -y docker git
 sudo service docker start
 sleep 15
 
@@ -43,8 +43,9 @@ EOF
 sudo python3 modify_compose_file.py
 
 sudo mkdir -p ./dags ./logs ./plugins ./config
+sudo git clone https://github.com/Dadolfo/portfolio_dags.git ./dags
 sudo echo -e "AIRFLOW_UID=$(id -u)" > .env
-sleep 15
+sleep 30
 sudo docker compose --project-name airflow up airflow-init
 sleep 60
 sudo docker compose --project-name airflow up -d
