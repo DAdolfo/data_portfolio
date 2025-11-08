@@ -1,7 +1,6 @@
 from airflow.sdk import dag
 from airflow.providers.amazon.aws.sensors.s3 import S3KeySensor
 from airflow.providers.docker.operators.docker import DockerOperator
-from docker.types import Mount
 import pendulum
 
 default_args = {
@@ -41,7 +40,6 @@ def s3_check_dag():
         hostname="events_ingest_container",
         auto_remove="success",
         command="python3 ingestion_pipeline.py",
-        network_mode="bridge",
         mem_limit="6g"
     )
 

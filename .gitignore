@@ -7,7 +7,6 @@ venv/
 *.csv
 .venv/
 .DS_Store
-test_folder/
 infra/airflow-instance-key
 infra/.terraform/
 infra/terraform.*

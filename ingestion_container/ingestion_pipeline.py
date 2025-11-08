@@ -1,6 +1,4 @@
-import os
 import logging
-from itertools import chain
 from datetime import datetime, timedelta
 import math
 
@@ -16,7 +14,6 @@ spark = SparkSession.builder \
     .config("spark.hadoop.fs.s3a.path.style.access", "false") \
     .config("spark.hadoop.fs.s3a.connection.ssl.enabled", "true") \
     .config("spark.hadoop.fs.s3a.endpoint", "s3.amazonaws.com") \
-    .config("spark.hadoop.fs.s3a.multiobjectdelete.enable", "false") \
     .getOrCreate()
 
 
@@ -51,8 +48,8 @@ except Exception as e:
     traceback.print_exc()
     raise
 
-events_size = events.count()
-logger.info(f"Events data loaded, there are {events_size} records on it.")
+initial_events_size = events.count()
+logger.info(f"Events data loaded, there are {initial_events_size} records on it.")
 
 #Let's check what columns have nulls and how many of them
 Events_null_dictionary = {col : events.filter(events[col].isNull()).count() for col in events.columns}
@@ -115,7 +112,9 @@ if sessionids_with_null_userids:
                      )
 
     Events_null_dictionary = {col : events.filter(events[col].isNull()).count() for col in events.columns}
+    final_events_size = events.count()
     logger.info(f"After cleanup, the events data has been written with the following amount of null values: {Events_null_dictionary}")
+    logger.info(f"We have written out {final_events_size} records.")
 
 if not sessionids_with_null_userids:
 
@@ -123,6 +122,6 @@ if not sessionids_with_null_userids:
                 mode = "overwrite",
                 partitionBy="event_type" #To be defined once we know what to train the model with     
                 )
-
+    logger.info(f"We have written out {final_events_size} records.")
 
 print("Good bye...")
