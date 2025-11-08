@@ -1,18 +1,13 @@
 #Ignore all source tables
 Databackup/
-local_airflow_with_astro/
 tables/
-data_pipeline/cleaned_data/
 
 #Ignore venvs and keys
 venv/
 *.csv
-data_pipeline/venv/
-.env
 .venv/
 .DS_Store
 test_folder/
-Docker files/logs/
 infra/airflow-instance-key
 infra/.terraform/
 infra/terraform.*
@@ -20,6 +15,5 @@ infra/airflow-*
 infra/terraform.tfvars
 infra/.terraform.*
 infra/terraform*
-test_folder/
 infra/terraform.tftstate*
 infra/.terraform.lock.*

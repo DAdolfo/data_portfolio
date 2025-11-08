@@ -17,9 +17,10 @@ sudo curl -SL https://github.com/docker/compose/releases/latest/download/docker-
 sudo chmod +x /usr/libexec/docker/cli-plugins/docker-compose
 
 #Install Airflow
-sudo curl -LfO 'https://airflow.apache.org/docs/apache-airflow/3.1.1/docker-compose.yaml'
+sudo curl -LO 'https://airflow.apache.org/docs/apache-airflow/3.1.1/docker-compose.yaml'
 sudo yum -y install python-pip
 sudo pip install pyyaml
+#Make it so it connects to docker and it doesn't load the example dags
 sudo cat > modify_compose_file.py << 'EOF'
 import yaml
 
@@ -42,6 +43,7 @@ EOF
 
 sudo python3 modify_compose_file.py
 
+#Get the dags and start Airflow
 sudo mkdir -p ./dags ./logs ./plugins ./config
 sudo git clone https://github.com/Dadolfo/portfolio_dags.git ./dags
 sudo echo -e "AIRFLOW_UID=$(id -u)" > .env
