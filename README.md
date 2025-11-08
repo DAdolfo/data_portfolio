@@ -47,7 +47,7 @@ So, let's begin:
 Keep in mind, the name resources will take in AWS go inside the brackets when you declare them, the name outside the brackets is the one you'll see in your infrastructure files and outputs while using Terraform.
 
 #### S3 Bucket
-This one is as simple as consulting the registry and choosing a bucket name, which I'd recommend testing before hand in the AWS console because ==if it already exists, its creation will fail==. Well at that point you might as well create it in the UI right?
+This one is as simple as consulting the registry and choosing a bucket name, which I'd recommend testing before hand in the AWS console because if it already exists, its creation will fail. Well at that point you might as well create it in the UI right?
 
 #### EC2 Instance
 To have a working EC2 instance that can read from S3, we need to:
@@ -141,3 +141,17 @@ For Spark to run we need the environment variables properly assigned, be careful
 This can be an issue that's hard to catch if you don't pay proper attention, and knowing it can save a lot of time.
 
 Finally, we copy the installs to make along with the pipeline script and execute it.
+
+## Project Execution
+
+I'll list the steps I use to run this project:
+
+1. Once we're in the project in the terminal, we `cd infra`, so we can then `terraform plan`.
+2. Check that everything looks all right, and we can `terraform apply` so then we approve by typing `yes`.
+3. This should give you a CLI output of the EC2 instance's public IP address. Copy that and paste it into a browser followed by the port 8080, it should look something like this: `87.116.182.34:8080`. 
+
+If the page isn't loading, wait a bit because it takes some time to get Airflow up and running.
+
+4. Log in with the secure user `airflow` and password `airflow`.
+
+5. Now that you're in the Airflow UI, trigger the s3_check_dag DAG and watch the magic happen in the Log tab :tada: 
